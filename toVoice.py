@@ -1,5 +1,6 @@
-import requests
 import os
+
+import requests
 
 
 def toVoice(text):
@@ -15,24 +16,32 @@ def toVoice(text):
         i.close()
         stats = os.stat(item + '.mp3')
         if stats.st_size != 0:
-            print(item + ' to voice done -> ' + item + '.mp3')
+            print(item + ' to voice done -> ' + item + '.mp3 ')
             text.remove(item)
         else:
             os.remove(item + '.mp3')
     return text
 
 
-if __name__ == '__main__':
-    source = open('vocal.txt', 'r')
+def main():
+    input('All files except provided should be removed in this dir. '
+          'Words should be stored in vocal.txt, ffmpeg should be pre installed. Press enter to continue.')
+    source = open('./vocal.txt', 'r')
     lines = source.readlines()
     words = []
     for word in lines:
         word = word.replace('\n', '')
         words.append(word)
-    print(str(len(words)) + ' words detected')
+    print(str(len(words)) + ' words detected.')
 
+    maxCount = len(words) * 100
+    count = 0
     while len(words) > 0:
+        if count > maxCount:
+            print('Transform words to voice error. Over max retry times.')
+            return
         words = toVoice(words)
+        count += 1
 
     fileList = os.listdir()
     mp3List = []
@@ -40,10 +49,10 @@ if __name__ == '__main__':
         if file.find('.mp3') != -1:
             mp3List.append(file)
     print(str(len(mp3List)) + ' mp3 detected')
-    file = open('mp3List.txt', 'a')
+    file = open('./mp3List.txt', 'a')
     absolutePath = os.path.abspath(os.curdir)
     for mp3 in mp3List:
-        with open('blank/blank.mp3', 'rb') as source:
+        with open('./blank/blank.mp3', 'rb') as source:
             data = source.read()
         source.close()
         with open(mp3.split('.')[0] + '_blank.mp3', 'ab') as target:
@@ -51,7 +60,6 @@ if __name__ == '__main__':
         target.close()
         line = ' \'' + absolutePath + '/' + mp3 + '\'' + '\n'
         line2 = ' \'' + absolutePath + '/' + mp3.split('.')[0] + '_blank.mp3' + '\'' + '\n'
-        print(line2)
         file.write('file' + line)
         file.write('file' + line2)
     file.close()
@@ -59,9 +67,13 @@ if __name__ == '__main__':
     os.system(command)
 
     # Delete waste
-    os.remove('mp3List.txt')
+    os.remove('./mp3List.txt')
     fileList = os.listdir()
     for file in fileList:
         if file.find('.mp3') != -1 and file.find('output') == -1:
             os.remove(file)
     print('Done')
+
+
+if __name__ == '__main__':
+    main()
