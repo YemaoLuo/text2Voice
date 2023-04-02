@@ -36,6 +36,9 @@ def main():
 
     maxCount = len(words) * 100
     count = 0
+    words_copy = []
+    for word in words:
+        words_copy.append(word)
     while len(words) > 0:
         if count > maxCount:
             print('Transform words to voice error. Over max retry times.')
@@ -45,9 +48,11 @@ def main():
 
     fileList = os.listdir()
     mp3List = []
-    for file in fileList:
-        if file.find('.mp3') != -1:
-            mp3List.append(file)
+    for word in words_copy:
+        for file in fileList:
+            if file.find('.mp3') != -1 and file.find(word) != -1:
+                mp3List.append(file)
+                break
     print(str(len(mp3List)) + ' mp3 detected')
     file = open('./mp3List.txt', 'a')
     absolutePath = os.path.abspath(os.curdir)
