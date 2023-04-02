@@ -17,7 +17,7 @@ def toVoice(text):
         i.close()
         stats = os.stat(item + '.mp3')
         if stats.st_size != 0:
-            print(str(count) + '/' + str(len(text) + count) + ':' + item + ' to voice done -> ' + item + '.mp3 ')
+            print(str(len(text) + 1 - count) + 'remain :' + item + ' to voice done -> ' + item + '.mp3 ')
             count += 1
             text.remove(item)
         else:
