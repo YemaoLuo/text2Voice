@@ -34,7 +34,7 @@ def main():
     for word in lines:
         word = word.replace('\n', '')
         words.append(word)
-    print(str(len(words)) + ' words detected.')
+    print(str(len(words) + 1) + ' words detected.')
 
     maxCount = len(words) * 100
     count = 0
