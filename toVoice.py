@@ -1,12 +1,13 @@
 import os
 
 import requests
+from pydub import AudioSegment
 
 
 def toVoice(text):
     # get sound from baidu
     user_agent = {"User-Agent": "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT6.1;Trident / 5.0)"}
-    count = 1
+    count = len(text)
     for item in text:
         url = 'https://fanyi.baidu.com/gettts?lan=en&text=' + item + '&spd=3&source=web'
         resp = requests.get(url, headers=user_agent)
@@ -17,8 +18,8 @@ def toVoice(text):
         i.close()
         stats = os.stat(item + '.mp3')
         if stats.st_size != 0:
-            print(str(len(text) + 1 - count) + 'remain :' + item + ' to voice done -> ' + item + '.mp3 ')
-            count += 1
+            print(str(count) + ' remain : ' + item + ' to voice done -> ' + item + '.mp3 ')
+            count -= 1
             text.remove(item)
         else:
             os.remove(item + '.mp3')
@@ -56,25 +57,19 @@ def main():
                 mp3List.append(file)
                 break
     print(str(len(mp3List)) + ' mp3 detected')
-    file = open('./mp3List.txt', 'a')
-    absolutePath = os.path.abspath(os.curdir)
-    for mp3 in mp3List:
-        with open('./blank/blank.mp3', 'rb') as source:
-            data = source.read()
-        source.close()
-        with open(mp3.split('.')[0] + '_blank.mp3', 'ab') as target:
-            target.write(data)
-        target.close()
-        line = ' \'' + absolutePath + '/' + mp3 + '\'' + '\n'
-        line2 = ' \'' + absolutePath + '/' + mp3.split('.')[0] + '_blank.mp3' + '\'' + '\n'
-        file.write('file' + line)
-        file.write('file' + line2)
-    file.close()
-    command = 'ffmpeg -f concat -safe 0 -i ' + absolutePath + '/' + 'mp3List.txt -c copy output.mp3'
-    os.system(command)
 
+    track = AudioSegment.from_mp3(mp3List[0])
+    track += AudioSegment.from_mp3(mp3List[0]) - 10000
+    track += AudioSegment.from_mp3(mp3List[0]) - 10000
+    for i in range(1, len(mp3List)):
+        print(str(i) + '/' + str(len(mp3List)) + ' concat in progress')
+        mp3 = mp3List[i]
+        track += AudioSegment.from_mp3(mp3)
+        track += AudioSegment.from_mp3(mp3) - 10000
+        track += AudioSegment.from_mp3(mp3) - 10000
+
+    track.export('output.mp3', format='mp3')
     # Delete waste
-    os.remove('./mp3List.txt')
     fileList = os.listdir()
     for file in fileList:
         if file.find('.mp3') != -1 and file.find('output') == -1:

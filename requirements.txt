@@ -1,5 +1,9 @@
-certifi @ file:///private/var/folders/nz/j6p8yfhx1mv_0grj5xl4650h0000gp/T/abs_5d968ni_yn/croot/certifi_1671487774636/work/certifi
+audiosegment==0.23.0
+baidu-aip==4.16.10
 charset-normalizer==3.1.0
 idna==3.4
+numpy==1.24.2
+pydub==0.25.1
 requests==2.28.2
 urllib3==1.26.15
+webrtcvad==2.0.10
