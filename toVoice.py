@@ -6,6 +6,7 @@ import requests
 def toVoice(text):
     # get sound from baidu
     user_agent = {"User-Agent": "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT6.1;Trident / 5.0)"}
+    count = 1
     for item in text:
         url = 'https://fanyi.baidu.com/gettts?lan=en&text=' + item + '&spd=3&source=web'
         resp = requests.get(url, headers=user_agent)
@@ -16,7 +17,8 @@ def toVoice(text):
         i.close()
         stats = os.stat(item + '.mp3')
         if stats.st_size != 0:
-            print(item + ' to voice done -> ' + item + '.mp3 ')
+            print(str(count) + '/' + str(len(text) + count) + ':' + item + ' to voice done -> ' + item + '.mp3 ')
+            count += 1
             text.remove(item)
         else:
             os.remove(item + '.mp3')
